@@ -36,7 +36,7 @@ fun SaveButton(
 fun SaveButtonPreview() {
     Surface {
         SaveButton (
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(2.dp),
             onSave = {}
         )
     }

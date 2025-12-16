@@ -15,13 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.chevalierlabsas.kashier.home.domain.Item
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SelectedItemChip(
     modifier: Modifier = Modifier,
     onRemove: () -> Unit,
-    text: String = ""
+    Item: Item
 ) {
     Card(
         modifier = modifier,
@@ -36,13 +37,13 @@ fun SelectedItemChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
-            Text(text = text, style = MaterialTheme.typography.bodyLarge)
+            Text(text = Item.name, style = MaterialTheme.typography.bodyLarge)
             IconButton(
                 onClick = { onRemove() },
                 content = {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = text
+                        contentDescription = Item.name
                     )
                 }
             )
@@ -57,7 +58,12 @@ fun SelectedItemChipPreview() {
         SelectedItemChip (
             modifier = Modifier.padding(23.dp),
             onRemove = {},
-            text = "Sayur 1 Kg"
+            Item = Item(
+                id = 5,
+                userId = 1,
+                name = "Item 5",
+                price = 500000.0
+            )
         )
     }
 }
