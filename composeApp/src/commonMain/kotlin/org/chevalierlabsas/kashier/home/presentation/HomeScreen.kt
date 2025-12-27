@@ -2,6 +2,7 @@ package org.chevalierlabsas.kashier.home.presentation
 
 import ItemCard
 import SaveButton
+import SearchBar
 import SelectedItemChip
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -50,10 +51,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-
+    var searchQuery by remember { mutableStateOf("") }
     var totalPrice by remember { mutableStateOf(0.00) }
     val selectedItems = remember { mutableStateListOf<Item>() }
     var showSelectedItem by remember { mutableStateOf(true) }
+    // 2. Filter data berdasarkan input user
+    val allItems = DummyDataSource().getData()
+    val filteredItems = allItems.filter { item ->
+        item.name.contains(searchQuery, ignoreCase = true)
+    }
     var showAllItem by remember { mutableStateOf(true) }
     Scaffold(
         topBar = {
@@ -134,7 +140,14 @@ fun HomeScreen() {
                     }
                 )
             }
-            items(DummyDataSource().getData()) { item -> // Barang individu
+            item {
+                SearchBar(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
+                    query = searchQuery,
+                    onQueryChange = {searchQuery = it },
+                )
+            }
+            items(filteredItems) { item -> // Barang individu
                 AnimatedVisibility(
                     visible = showAllItem,
                     enter = fadeIn(),

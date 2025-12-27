@@ -33,6 +33,24 @@ class DummyDataSource {
             userId = 1,
             name = "Item 5",
             price = 500000.0
+        ),
+        Item(
+            id = 6,
+            userId = 2,
+            name = "Item 6",
+            price = 600000.0
+        ),
+        Item(
+            id = 7,
+            userId = 1,
+            name = "Item 7",
+            price = 700000.0
+        ),
+        Item(
+            id = 8,
+            userId = 1,
+            name = "Item 8",
+            price = 800000.0
         )
     )
 }

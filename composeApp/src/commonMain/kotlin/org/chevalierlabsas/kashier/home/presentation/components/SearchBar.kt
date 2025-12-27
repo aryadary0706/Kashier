@@ -17,11 +17,15 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, ) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    ) {
     OutlinedTextField(
         modifier = modifier,
-        value = "",
-        onValueChange = {  },
+        value = query,
+        onValueChange = onQueryChange,
         placeholder = {
             Text(stringResource(Res.string.searchbar_hint))
         },
@@ -48,7 +52,9 @@ fun SearchBar(modifier: Modifier = Modifier, ) {
 fun SearchbarPreview() {
     Surface {
         SearchBar(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(20.dp),
+            query = "Teh Manis",
+            onQueryChange = {}
         )
     }
 }

@@ -54,6 +54,8 @@ kotlin {
     }
 }
 
+
+
 android {
     namespace = "org.chevalierlabsas.kashier"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
