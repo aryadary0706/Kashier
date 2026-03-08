@@ -48,7 +48,7 @@ fun TotalPriceHeaderPreview() {
     Surface {
         TotalPriceHeader(
             modifier = Modifier.fillMaxWidth()
-                .padding(16.dp), // <--- Tambahkan Modifier Padding untuk preview
+                .padding(16.dp),
             totalPrice = 100000.00
         )
     }
