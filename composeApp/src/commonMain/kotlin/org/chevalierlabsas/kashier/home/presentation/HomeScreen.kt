@@ -148,7 +148,7 @@ fun HomeScreen(
             }
             items(state.items) { item ->
                 AnimatedVisibility(
-                    visible = state.showAllItem,
+                    visible = state.showAllItem || state.searchQuery.isNotBlank(),
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {

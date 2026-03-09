@@ -20,10 +20,14 @@ class HomeViewModel: ViewModel() {
             is HomeEvent.OnRemoveItem -> removeItem(event.item)
             is HomeEvent.OnSearchQueryChange -> updateQuery(event.query)
             is HomeEvent.OnSelectedItemVisibilityChange -> setSelectedItemVisibility(event.visible)
+
+            //Tambahan assignment
+            is HomeEvent.OnAddItemToList -> addItemList(event.item)
             is HomeEvent.OnEditItem -> editItem(event.updatedItem)
-            is HomeEvent.OnAddItemToList -> addItemtoList(event.item)
+
             HomeEvent.OnSaveTransaction -> saveTransaction()
             HomeEvent.OnSearchQuerySubmit -> search()
+
         }
     }
 
@@ -87,7 +91,7 @@ class HomeViewModel: ViewModel() {
         }
     }
 
-    private fun addItemtoList(item: Item) {
+    private fun addItemList(item: Item) {
         _state.update { currentState ->
             currentState.copy(
                 items = currentState.items + item
