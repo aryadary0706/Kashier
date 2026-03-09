@@ -7,4 +7,9 @@
     <string name="add_item_fab_label">Buat Barang</string>
     <string name="all_item_label">Semua Barang</string>
     <string name="choosen_label">Barang Terpilih</string>
+
+    <string name="model_name_input">Beri Nama Barang</string>
+    <string name="model_price_input">000,00</string>
+    <string name="title_modal_edit">Edit Barang</string>
+    <string name="title_modal_add">Tambah Barang</string>
 </resources>

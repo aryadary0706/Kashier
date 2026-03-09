@@ -37,7 +37,7 @@ fun ItemCard(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = contentColor
+            contentColor = MaterialTheme.colorScheme.onSecondary
         )
     ) {
         Row(
@@ -54,7 +54,7 @@ fun ItemCard(
             ) {
                 Text(
                     text = item.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Normal),
                     color = contentColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))

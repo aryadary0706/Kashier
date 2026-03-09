@@ -2,8 +2,8 @@ package org.chevalierlabsas.kashier.core
 
 import SearchBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.chevalierlabsas.kashier.home.presentation.HomeScreen
 import org.chevalierlabsas.kashier.home.presentation.HomeViewModel

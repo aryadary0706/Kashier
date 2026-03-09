@@ -10,4 +10,6 @@ sealed interface HomeEvent {
     data class OnAddItem(val item: Item): HomeEvent
     data class OnRemoveItem(val item: Item): HomeEvent
     data object OnSaveTransaction: HomeEvent
+    data class OnEditItem(val updatedItem: Item): HomeEvent
+    data class OnAddItemToList(val item: Item): HomeEvent
 }

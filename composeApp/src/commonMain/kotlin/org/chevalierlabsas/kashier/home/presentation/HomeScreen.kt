@@ -11,25 +11,24 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,11 +39,13 @@ import kashier.composeapp.generated.resources.add_item_fab_label
 import kashier.composeapp.generated.resources.all_item_label
 import kashier.composeapp.generated.resources.app_name
 import kashier.composeapp.generated.resources.choosen_label
-import org.chevalierlabsas.kashier.home.data.DummyDataSource
+import kashier.composeapp.generated.resources.title_modal_add
+import kashier.composeapp.generated.resources.title_modal_edit
+import kotlinx.coroutines.launch
 import org.chevalierlabsas.kashier.home.domain.Item
 import org.chevalierlabsas.kashier.home.presentation.components.HomeSeparator
+import org.chevalierlabsas.kashier.home.presentation.components.ItemBottomSheetContent
 import org.chevalierlabsas.kashier.home.presentation.components.TotalPriceHeader
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -54,6 +55,9 @@ fun HomeScreen(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedItemForSheet by remember { mutableStateOf<Item?>(null) }
 
     Scaffold(
         topBar = {
@@ -65,16 +69,18 @@ fun HomeScreen(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {TODO("Add Item.")},
+                onClick = {
+                    selectedItemForSheet = null
+                    showBottomSheet = true
+                },
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 text = { Text(text = stringResource(Res.string.add_item_fab_label)) },
                 icon = { Icon(Icons.Filled.Add, contentDescription = stringResource(Res.string.add_item_fab_label)) }
             )
         }
-    ) {
-        paddingValues ->
+    ) { contentPadding ->
         LazyColumn(
-            contentPadding = paddingValues,
+            contentPadding = contentPadding,
         ) {
             item {
                 TotalPriceHeader(
@@ -83,9 +89,9 @@ fun HomeScreen(
                 )
             }
             item {
-                SaveButton (
-                    modifier = Modifier.padding(horizontal = 2.dp).fillMaxWidth(),
-                    onSave = { TODO("Save data.")},
+                SaveButton(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp),
+                    onSave = { TODO("Save data.") },
                     enabled = state.selectedItems.isNotEmpty() && state.totalPrice > 0.00
                 )
             }
@@ -104,9 +110,9 @@ fun HomeScreen(
                     visible = state.showSelectedItem,
                     enter = expandVertically(),
                     exit = shrinkVertically()
-                ){
-                    FlowRow (
-                        modifier = Modifier.padding(horizontal = 14.dp),
+                ) {
+                    FlowRow(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         content = {
@@ -118,7 +124,6 @@ fun HomeScreen(
                                     Item = item,
                                     modifier = Modifier.padding(horizontal = 4.dp)
                                 )
-
                             }
                         }
                     )
@@ -136,29 +141,69 @@ fun HomeScreen(
             }
             item {
                 SearchBar(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 13.dp),
                     query = state.searchQuery,
-                    onQueryChange = {  onEvent(HomeEvent.OnSearchQueryChange(it)) },
+                    onQueryChange = { onEvent(HomeEvent.OnSearchQueryChange(it)) },
                 )
             }
-            items(state.items) { item -> // Barang individu
+            items(state.items) { item ->
                 AnimatedVisibility(
                     visible = state.showAllItem,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    // Gunakan ItemCard milik kalian
-                    // Dibawah adalah contoh ItemCard
                     ItemCard(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                         item = item,
-                        onEditClick = { },
+                        onEditClick = {
+                            selectedItemForSheet = item
+                            showBottomSheet = true
+                        },
                         onAddClick = {
                             onEvent(HomeEvent.OnAddItem(item))
                         }
                     )
                 }
             }
+        }
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+                selectedItemForSheet = null
+            },
+            sheetState = sheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            ItemBottomSheetContent(
+                title = if (selectedItemForSheet == null)
+                    stringResource(Res.string.title_modal_add)
+                else
+                    stringResource(Res.string.title_modal_edit),
+                initialName = selectedItemForSheet?.name ?: "",
+                initialPrice = selectedItemForSheet?.price?.toString() ?: "",
+                onSave = { name, price ->
+                    val doublePrice = price.toDoubleOrNull() ?: 0.0
+                    if (selectedItemForSheet == null) {
+                        val newItem = Item(
+                            id = 0,
+                            name = name,
+                            price = doublePrice,
+                            userId = 1,
+                        )
+                        onEvent(HomeEvent.OnAddItem(newItem))
+                    } else {
+                        val updatedItem = selectedItemForSheet!!.copy(
+                            name = name,
+                            price = doublePrice,
+                        )
+                        onEvent(HomeEvent.OnEditItem(updatedItem))
+                    }
+                    showBottomSheet = false
+                    selectedItemForSheet = null
+                }
+            )
         }
     }
 }

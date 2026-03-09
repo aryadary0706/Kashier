@@ -18,10 +18,12 @@ class HomeViewModel: ViewModel() {
             is HomeEvent.OnAddItem -> addItem(event.item)
             is HomeEvent.OnAllItemVisibilityChange -> setAllItemVisibility(event.visible)
             is HomeEvent.OnRemoveItem -> removeItem(event.item)
-            HomeEvent.OnSaveTransaction -> saveTransaction()
             is HomeEvent.OnSearchQueryChange -> updateQuery(event.query)
-            HomeEvent.OnSearchQuerySubmit -> search()
             is HomeEvent.OnSelectedItemVisibilityChange -> setSelectedItemVisibility(event.visible)
+            is HomeEvent.OnEditItem -> editItem(event.updatedItem)
+            is HomeEvent.OnAddItemToList -> addItemtoList(event.item)
+            HomeEvent.OnSaveTransaction -> saveTransaction()
+            HomeEvent.OnSearchQuerySubmit -> search()
         }
     }
 
@@ -73,6 +75,23 @@ class HomeViewModel: ViewModel() {
             }
         } else {
             _state.update { it.copy(items = _items) }
+        }
+    }
+
+    private fun editItem(updatedItem: Item) {
+        _state.update { currentState ->
+            val newItems = currentState.items.map {
+                if (it.id == updatedItem.id) updatedItem else it
+            }
+            currentState.copy(items = newItems)
+        }
+    }
+
+    private fun addItemtoList(item: Item) {
+        _state.update { currentState ->
+            currentState.copy(
+                items = currentState.items + item
+            )
         }
     }
 }
