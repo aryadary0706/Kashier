@@ -12,4 +12,7 @@
     <string name="model_price_input">000,00</string>
     <string name="title_modal_edit">Edit Barang</string>
     <string name="title_modal_add">Tambah Barang</string>
+
+    <string name="history_topbar">Riwayat Transaksi</string>
+    <string name="navigate_back">Kembali</string>
 </resources>

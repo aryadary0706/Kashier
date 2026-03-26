@@ -17,10 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -39,9 +41,11 @@ import kashier.composeapp.generated.resources.add_item_fab_label
 import kashier.composeapp.generated.resources.all_item_label
 import kashier.composeapp.generated.resources.app_name
 import kashier.composeapp.generated.resources.choosen_label
+import kashier.composeapp.generated.resources.history_topbar
 import kashier.composeapp.generated.resources.title_modal_add
 import kashier.composeapp.generated.resources.title_modal_edit
 import kotlinx.coroutines.launch
+import org.chevalierlabsas.kashier.core.navigation.HistoryDestination
 import org.chevalierlabsas.kashier.home.domain.Item
 import org.chevalierlabsas.kashier.home.presentation.components.HomeSeparator
 import org.chevalierlabsas.kashier.home.presentation.components.ItemBottomSheetContent
@@ -54,6 +58,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun HomeScreen(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
+    onNavigate: (Any) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -64,6 +69,16 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(text = stringResource(Res.string.app_name))
+                },
+                actions = {
+                    IconButton(
+                        onClick = { onNavigate(HistoryDestination) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.History,
+                            contentDescription = stringResource(Res.string.history_topbar)
+                        )
+                    }
                 }
             )
         },
@@ -213,6 +228,7 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     HomeScreen(
         state = HomeState(),
-        onEvent = {}
+        onEvent = {},
+        onNavigate = {},
     )
 }
