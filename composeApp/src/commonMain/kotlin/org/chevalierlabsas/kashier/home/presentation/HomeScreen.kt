@@ -156,7 +156,7 @@ fun HomeScreen(
             }
             item {
                 SearchBar(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 13.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 13.dp, vertical = 6.dp),
                     query = state.searchQuery,
                     onQueryChange = { onEvent(HomeEvent.OnSearchQueryChange(it)) },
                 )
