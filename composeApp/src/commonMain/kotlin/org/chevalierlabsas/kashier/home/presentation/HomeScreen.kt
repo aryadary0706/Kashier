@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +45,14 @@ import kashier.composeapp.generated.resources.choosen_label
 import kashier.composeapp.generated.resources.history_topbar
 import kashier.composeapp.generated.resources.title_modal_add
 import kashier.composeapp.generated.resources.title_modal_edit
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.chevalierlabsas.kashier.core.navigation.HistoryDestination
 import org.chevalierlabsas.kashier.home.domain.Item
 import org.chevalierlabsas.kashier.home.presentation.components.HomeSeparator
 import org.chevalierlabsas.kashier.home.presentation.components.ItemBottomSheetContent
 import org.chevalierlabsas.kashier.home.presentation.components.TotalPriceHeader
+import org.chevalierlabsas.kashier.home.repository.HomeRepository
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -221,6 +224,32 @@ fun HomeScreen(
             )
         }
     }
+    LaunchedEffect(state.items) {
+        if (state.items.isEmpty()) {
+            onEvent(HomeEvent.OnLoadData)
+        }
+    }
+}
+
+class HomeViewModel(private val repository: HomeRepository) {
+
+    // ..
+
+    fun onEvent(event: HomeEvent) {
+        when (event) {
+            // Handle event load data
+            HomeEvent.OnLoadData -> loadData()
+        }
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            delay(2000) /* Simulate Network Call */
+            val data = repository.getItems()
+            _state.update { it.copy(items = data) }
+        }
+    }
+
 }
 
 @Preview
