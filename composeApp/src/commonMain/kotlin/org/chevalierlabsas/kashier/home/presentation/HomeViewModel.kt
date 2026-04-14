@@ -1,16 +1,19 @@
 package org.chevalierlabsas.kashier.home.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.chevalierlabsas.kashier.home.data.DummyDataSource
+import kotlinx.coroutines.launch
 import org.chevalierlabsas.kashier.home.domain.Item
+import org.chevalierlabsas.kashier.home.domain.repository.HomeRepository
+import org.chevalierlabsas.kashier.home.data.DummyDataSource
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(private val repository: HomeRepository): ViewModel() {
 
-    private val _items = DummyDataSource().getData()
-    private val _state = MutableStateFlow(HomeState(items = _items))
+    private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
     fun onEvent(event: HomeEvent){
@@ -20,23 +23,30 @@ class HomeViewModel: ViewModel() {
             is HomeEvent.OnRemoveItem -> removeItem(event.item)
             is HomeEvent.OnSearchQueryChange -> updateQuery(event.query)
             is HomeEvent.OnSelectedItemVisibilityChange -> setSelectedItemVisibility(event.visible)
-
             //Tambahan assignment
             is HomeEvent.OnAddItemToList -> addItemList(event.item)
             is HomeEvent.OnEditItem -> editItem(event.updatedItem)
 
             HomeEvent.OnSaveTransaction -> saveTransaction()
             HomeEvent.OnSearchQuerySubmit -> search()
+            HomeEvent.OnLoadData -> loadData()
+        }
+    }
 
+    private fun loadData() {
+        viewModelScope.launch {
+            delay(2000) /* Simulate Network Call */
+            val data = repository.getItems()
+            _state.update { it.copy(items = data) }
         }
     }
 
     private fun updateQuery(query: String) {
         _state.update { it.copy(searchQuery = query) }
         if (state.value.searchQuery.isBlank()) {
-            _state.update { it.copy(items = _items) }
+            loadData()
+            }
         }
-    }
 
     private fun addItem(item: Item) {
         _state.update {
@@ -78,7 +88,7 @@ class HomeViewModel: ViewModel() {
                 )
             }
         } else {
-            _state.update { it.copy(items = _items) }
+            loadData()
         }
     }
 

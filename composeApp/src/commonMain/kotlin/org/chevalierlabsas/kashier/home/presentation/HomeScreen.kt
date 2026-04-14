@@ -52,7 +52,7 @@ import org.chevalierlabsas.kashier.home.domain.Item
 import org.chevalierlabsas.kashier.home.presentation.components.HomeSeparator
 import org.chevalierlabsas.kashier.home.presentation.components.ItemBottomSheetContent
 import org.chevalierlabsas.kashier.home.presentation.components.TotalPriceHeader
-import org.chevalierlabsas.kashier.home.repository.HomeRepository
+import org.chevalierlabsas.kashier.home.domain.repository.HomeRepository
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -63,6 +63,11 @@ fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     onNavigate: (Any) -> Unit
 ) {
+    LaunchedEffect(state.items) {
+        if (state.items.isEmpty()) {
+            onEvent(HomeEvent.OnLoadData)
+        }
+    }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItemForSheet by remember { mutableStateOf<Item?>(null) }
@@ -229,27 +234,6 @@ fun HomeScreen(
             onEvent(HomeEvent.OnLoadData)
         }
     }
-}
-
-class HomeViewModel(private val repository: HomeRepository) {
-
-    // ..
-
-    fun onEvent(event: HomeEvent) {
-        when (event) {
-            // Handle event load data
-            HomeEvent.OnLoadData -> loadData()
-        }
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-            delay(2000) /* Simulate Network Call */
-            val data = repository.getItems()
-            _state.update { it.copy(items = data) }
-        }
-    }
-
 }
 
 @Preview
