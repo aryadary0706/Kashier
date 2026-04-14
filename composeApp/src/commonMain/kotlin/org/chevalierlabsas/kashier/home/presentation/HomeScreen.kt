@@ -229,11 +229,6 @@ fun HomeScreen(
             )
         }
     }
-    LaunchedEffect(state.items) {
-        if (state.items.isEmpty()) {
-            onEvent(HomeEvent.OnLoadData)
-        }
-    }
 }
 
 @Preview

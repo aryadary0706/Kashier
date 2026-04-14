@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,6 @@ import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
 import org.chevalierlabsas.kashier.history.domain.histItem
 import org.chevalierlabsas.kashier.history.presentation.components.HistoryCard
-import org.chevalierlabsas.kashier.home.data.DummyDataSource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 
@@ -59,15 +59,20 @@ fun getGroupedHistory(items: List<histItem>): Map<String, List<histItem>> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
+    state: HistoryState,
+    onEvent: (HistoryEvent) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val historyData = DummyDataSource().gethistory();
-    val groupedHistory = getGroupedHistory(historyData)
+    LaunchedEffect(state.historyItems) {
+        if (state.historyItems.isEmpty()) {
+            onEvent(HistoryEvent.OnLoadHistory)
+        }
+    }
+    val groupedHistory = getGroupedHistory(state.historyItems)
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    // buat sebuah string di strings.xml dengan value "Riwayat Transaksi"
                     Text(stringResource(Res.string.history_topbar))
                 },
                 navigationIcon = {

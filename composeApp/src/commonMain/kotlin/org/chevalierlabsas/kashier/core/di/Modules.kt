@@ -1,5 +1,10 @@
 package org.chevalierlabsas.kashier.core.di
 
+import org.chevalierlabsas.kashier.history.data.HistoryDataSource
+import org.chevalierlabsas.kashier.history.data.HistoryDataSourceImpl
+import org.chevalierlabsas.kashier.history.domain.repository.HistoryRepository
+import org.chevalierlabsas.kashier.history.domain.repository.HistoryRepositoryImpl
+import org.chevalierlabsas.kashier.history.presentation.HistoryViewModel
 import org.chevalierlabsas.kashier.home.data.DummyDataSource
 import org.chevalierlabsas.kashier.home.data.DummyDataSourceImpl
 import org.chevalierlabsas.kashier.home.domain.repository.HomeRepository
@@ -15,6 +20,9 @@ expect val platformModules: Module
 val sharedModules = module {
     singleOf(::DummyDataSourceImpl).bind<DummyDataSource>()
     singleOf(::HomeRepositoryImpl).bind<HomeRepository>()
+    singleOf(::HistoryDataSourceImpl).bind<HistoryDataSource>()
+    singleOf(::HistoryRepositoryImpl).bind<HistoryRepository>()
 
     factory { HomeViewModel(get()) }
+    factory { HistoryViewModel(get()) }
 }
